@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Фейерверк для моей любимой</title>
+<style>
+body {
+  background-color: #000;
+  overflow: hidden;
+}
+canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const fireNumber = 15; // Количество фейерверков
+  const range = 100; // Радиус разлета частиц
+  const snowCount = 100; // Количество снежинок
+
+  let fires = [];
+  let snow = [];
+  let messageIndex = 0; // Индекс текущего сообщения
+  let messageLife = 0; // Время жизни сообщения
+  const messages = [
+    { text: "Happy New Year", size: 40, y: canvas.height / 2 - 40 },
+    { text: "my love", size: 40, y: canvas.height / 2 + 40 },
+    { text: "Alice", size: 60, y: canvas.height / 2 }
+  ];
+
+  // Создаем снежинки
+  for (let i = 0; i < snowCount; i++) {
+    let grayScale = Math.floor(Math.random() * 156) + 100; // 100 - 255
+    snow.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 3 + 1,
+      speed: Math.random() * 2 + 0.5,
+      color: `rgba(${grayScale},${grayScale},${grayScale},${Math.random() * 0.5 + 0.2})` // Прозрачность от 0.2 до 0.7
+    });
+  }
+
+  function randColor() {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function makeFullCircleFirework(fire) {
+    let color = randColor();
+    let velocity = Math.random() * 8 + 8;
+    let max = fireNumber;
+    for (let i = 0; i < max; i++) {
+      let rad = (i * Math.PI * 2) / max;
+      fires.push({
+        x: fire.x,
+        y: fire.y,
+        size: Math.random() + 1.5,
+        fill: color,
+        vx: Math.cos(rad) * velocity + (Math.random() - 0.5) * 0.5,
+        vy: Math.sin(rad) * velocity + (Math.random() - 0.5) * 0.5,
+        ay: 0.06,
+        alpha: 1,
+        life: Math.round(Math.random() * range) / 2 + range / 1.5
+      });
+    }
+  }
+
+  function drawMessage() {
+    if (messageLife > 0) {
+      let message = messages[messageIndex];
+      ctx.font = `${message.size}px Arial`;
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.fillText(message.text, canvas.width / 2, message.y);
+      messageLife -= 1;
+    } else {
+      messageIndex = (messageIndex + 1) % messages.length;
+      messageLife = 200; // Время отображения сообщения
+    }
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Рисуем снег
+    snow.forEach(flake => {
+      ctx.beginPath();
+      ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+      ctx.fillStyle = flake.color; // Используем цвет снежинки
+      ctx.fill();
+
+      flake.y += flake.speed;
+      if (flake.y > canvas.height) {
+        flake.y = 0;
+        flake.x = Math.random() * canvas.width;
+      }
+    });
+
+    for (let i = 0; i < fires.length; i++) {
+      let fire = fires[i];
+      ctx.beginPath();
+      ctx.arc(fire.x, fire.y, fire.size, 0, Math.PI * 2);
+      ctx.fillStyle = fire.fill;
+      ctx.globalAlpha = fire.alpha;
+      ctx.fill();
+
+      fire.x += fire.vx;
+      fire.y += fire.vy;
+      fire.vy += fire.ay;
+      fire.alpha -= 0.008;
+      fire.life -= 1;
+
+      if (fire.life <= 0) {
+        fires.splice(i, 1);
+        i--;
+      }
+    }
+
+    // Запускаем новые фейерверки
+    if (Math.random() < 0.03) {
+      makeFullCircleFirework({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height
+      });
+    }
+
+    drawMessage();
+  }
+
+  animate();
+
+  // Обработчик нажатия клавиши пробел
+  document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+      messageLife = 200; // Запускаем отображение сообщения
+    }
+  });
+</script>
+</body>
+</html>
