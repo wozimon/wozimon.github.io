@@ -1,153 +1,538 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Фейерверк для моей любимой</title>
-<style>
-body {
-  background-color: #000;
-  overflow: hidden;
-}
-canvas {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-</style>
+    <title>Tempura Trade Rate</title>
+    <style>
+        body {
+            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #36393f;
+            margin: 0;
+            padding: 0;
+            color: #dcddde;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #40444b;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 0;
+            font-family: 'Ginto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 0;
+            color: #fff;
+            font-family: 'Ginto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        .trade-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .trade-column {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #202225;
+            border-radius: 5px;
+            margin: 0 10px;
+            background-color: #36393f;
+        }
+        .trade-column h2{
+            text-align: center;
+            color: white;
+        }
+
+        .slot {
+            background-color: #2f3136;
+            border: 1px solid #202225;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 40px;
+            line-height: 40px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #dcddde;
+        }
+
+        .slot:hover {
+            background-color: #40444b;
+        }
+
+        .selected {
+            background-color: #7289da;
+            color: white;
+        }
+
+        .trade-button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .trade-button:hover {
+            background-color: #677bc4;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .win {
+            color: #43b581;
+        }
+
+        .lose {
+            color: #f04747;
+        }
+
+        .fair {
+            color: #faa61a;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .item-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .item-button {
+            background-color: #a4b1e2;
+            border: 1px solid #202225;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            color: #000000;
+
+        }
+
+        .item-button:hover {
+            background-color: #40444b;
+        }
+
+        .item-selected {
+            background-color: #7289da;
+            color: white;
+        }
+
+        .item-search {
+            display: block;
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 20px auto;
+            border: 1px solid #202225;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #2f3136;
+            color: #dcddde;
+        }
+
+        .category-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .category-button {
+            background-color: #2f3136;
+            border: 1px solid #202225;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #dcddde;
+        }
+
+        .category-button:hover {
+            background-color: #40444b;
+        }
+
+        .category-selected {
+            background-color: #7289da;
+            color: white;
+        }
+
+        .clear-buttons-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .clear-button {
+            padding: 5px 10px;
+            background-color: #f04747;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .discord-button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .discord-button:hover {
+          background-color: #677bc4;
+        }
+        
+        .discord-button::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+          opacity: 0;
+          transition: opacity 0.5s;
+          pointer-events: none;
+        }
+        
+        .discord-button:hover::before {
+          opacity: 1;
+          animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+          0% {
+            transform: scale(0.5);
+            opacity: 0;
+          }
+          50% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(1.2);
+            opacity: 0;
+          }
+        }
+        @media (max-width: 768px) {
+            .trade-container {
+                flex-direction: column;
+            }
+            .trade-column{
+                margin: 0;
+            }
+            .container{
+                margin: 10px auto;
+                width: 98%;
+            }
+            .trade-column + .trade-column{
+                margin-top: 20px;
+            }
+        }
+
+
+    </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<script>
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+    <div class="container">
+        <h1>Tempura</h1>
+        <p class="subtitle">Trade Rate</p>
 
-  const fireNumber = 15; // Количество фейерверков
-  const range = 100; // Радиус разлета частиц
-  const snowCount = 100; // Количество снежинок
+        <input type="text" id="itemSearch" class="item-search" placeholder="Search for items..." onkeyup="filterItems()">
+        <div class="category-container">
+            <button class="category-button category-selected" id="category-all" onclick="filterCategory('blox-fruits')">Blox Fruits</button>
+        </div>
+        <div class="trade-container">
+            <div class="trade-column">
+                <h2>Your Items</h2>
+                <div class="slot" id="yourSlot1" onclick="selectSlot('yourSlot1')"></div>
+                <div class="slot" id="yourSlot2" onclick="selectSlot('yourSlot2')"></div>
+                <div class="slot" id="yourSlot3" onclick="selectSlot('yourSlot3')"></div>
+                <div class="slot" id="yourSlot4" onclick="selectSlot('yourSlot4')"></div>
+                <div class="clear-buttons-container">
+                    <button class="clear-button" onclick="clearSlots('your')">Clear Your Slots</button>
+                </div>
+            </div>
+            <div class="trade-column">
+                <h2>Opponent's Items</h2>
+                <div class="slot" id="opponentSlot1" onclick="selectSlot('opponentSlot1')"></div>
+                <div class="slot" id="opponentSlot2" onclick="selectSlot('opponentSlot2')"></div>
+                <div class="slot" id="opponentSlot3" onclick="selectSlot('opponentSlot3')"></div>
+                <div class="slot" id="opponentSlot4" onclick="selectSlot('opponentSlot4')"></div>
+                <div class="clear-buttons-container">
+                    <button class="clear-button" onclick="clearSlots('opponent')">Clear Opponent Slots</button>
+                </div>
+            </div>
+        </div>
 
-  let fires = [];
-  let snow = [];
-  let messageIndex = 0; // Индекс текущего сообщения
-  let messageLife = 0; // Время жизни сообщения
-  const messages = [
-    { text: "Happy New Year", size: 40, y: canvas.height / 2 - 40 },
-    { text: "my love", size: 40, y: canvas.height / 2 + 40 },
-    { text: "Alice", size: 60, y: canvas.height / 2 }
-  ];
+        <button class="trade-button" onclick="calculateTrade()">Calculate Trade</button>
 
-  // Создаем снежинки
-  for (let i = 0; i < snowCount; i++) {
-    let grayScale = Math.floor(Math.random() * 156) + 100; // 100 - 255
-    snow.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 3 + 1,
-      speed: Math.random() * 2 + 0.5,
-      color: `rgba(${grayScale},${grayScale},${grayScale},${Math.random() * 0.5 + 0.2})` // Прозрачность от 0.2 до 0.7
-    });
-  }
+        <div class="result" id="tradeResult"></div>
+        <div class="item-list" id="itemList"></div>
+        <a href="https://discord.gg/Yh46EFRQQ2" class="discord-button" target="_blank">Join our Discord</a>
+    </div>
 
-  function randColor() {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
-    return `rgb(${r},${g},${b})`;
-  }
+    <script>
+        const prices = {
+            "quake": 1,
+            "magma": 1.5,
+            "love": 2.5,
+            "spider": 2.5,
+            "gravity": 3.5,
+            "pain": 3.5,
+            "phoenix": 10,
+            "sound": 10,
+            "shadow": 15,
+            "blizzard": 17.5,
+            "control": 30,
+            "rumble": 32,
+            "venom": 40,
+            "portal": 41,
+            "mammonth": 42.5,
+            "buddha": 47.5,
+            "spirit": 55,
+            "trex": 100,
+            "dough": 150,
+            "leopard": 230,
+            "kitsune": 725,
+            "dragon": 975,
+            "2x boss drop chance": 275,
+            "fast boats": 275,
+            "+1 fruit storage": 300,
+            "2x money": 325,
+            "2x mastery": 325,
+            "dark blade": 1055,
+            "fruit notifier": 2105,
+            "perm rocket": 25,
+            "perm spin": 50,
+            "perm chop": 75,
+            "perm spring": 100,
+            "perm spike": 150,
+            "perm smoke": 200,
+            "perm bomb": 280,
+            "perm falcon": 350,
+            "perm fire": 400,
+            "perm sand": 600,
+            "perm diamond": 600,
+            "perm ice": 650,
+            "perm barrier": 800,
+            "perm rubber": 850,
+            "perm ghost": 900,
+            "perm dark": 1000,
+            "perm light": 1050,
+            "perm magma": 1450,
+            "perm buddha": 1500,
+            "perm spider": 1600,
+            "perm love": 1600,
+            "perm sound": 1700,
+            "perm phoenix": 1800,
+            "perm portal": 1800,
+            "perm gravity": 1900,
+            "perm rumble": 1900,
+            "perm blizzard": 1950,
+            "perm pain": 2000,
+            "perm mammoth": 2000,
+            "perm trex": 2000,
+            "perm venom": 2100,
+            "perm shadow": 2200,
+            "perm dough": 2200,
+            "perm control": 2800,
+            "perm spirit": 2800,
+            "perm leopard": 3400,
+            "perm kitsune": 4250,
+            "perm dragon": 6800,
+        };
 
-  function makeFullCircleFirework(fire) {
-    let color = randColor();
-    let velocity = Math.random() * 8 + 8;
-    let max = fireNumber;
-    for (let i = 0; i < max; i++) {
-      let rad = (i * Math.PI * 2) / max;
-      fires.push({
-        x: fire.x,
-        y: fire.y,
-        size: Math.random() + 1.5,
-        fill: color,
-        vx: Math.cos(rad) * velocity + (Math.random() - 0.5) * 0.5,
-        vy: Math.sin(rad) * velocity + (Math.random() - 0.5) * 0.5,
-        ay: 0.06,
-        alpha: 1,
-        life: Math.round(Math.random() * range) / 2 + range / 1.5
-      });
-    }
-  }
+        const alternative_names = {
+            "quake": ["квейк", "дрожь", "дрож", "землетрясение"],
+            "magma": ["магма", "лава"],
+            "love": ["любовь", "лов", "лове"],
+            "spider": ["нитки", "паук", "спайдер", "спидер", "string"],
+            "gravity": ["гравити", "гравитация"],
+            "pain": ["paw", "боль", "пейн", "лапа"],
+            "phoenix": ["феникс", "птица феникс", "feniks", "fenix", "пхоеникс"],
+            "sound": ["звук", "саунд", "соунд"],
+            "shadow": ["тень", "шадоу", "шадов"],
+            "blizzard": ["метель", "буря", "снег", "близард", "близзард", "blizard"],
+            "control": ["контроль", "контрол", "кантроль"],
+            "rumble": ["рамбл", "румбл", "электричество", "ramble", "rumbl"],
+            "venom": ["веном", "венам", "винам", "яд", "отрава"],
+            "portal": ["портал", "портл", "door", "дверь"],
+            "mammonth": ["мамонт", "mamont", "mammont"],
+            "buddha": ["budha", "budda", "buda", "буда", "будда"],
+            "spirit": ["спирит", "дух", "соул", "душа", "soul", "духи"],
+            "trex": ["трекс", "t-rex", "т рекс", "т-рекс", "динозавр", "ти рекс", "тирекс"],
+        };
+        const categories = {
+            "blox-fruits": [
+                "quake", "magma", "love", "spider", "gravity", "pain", "phoenix", "sound",
+                "shadow", "blizzard", "control", "rumble", "venom", "portal", "mammonth",
+                "buddha", "spirit", "trex", "dough", "leopard", "kitsune", "dragon",
+                "2x boss drop chance", "fast boats", "+1 fruit storage", "2x money", "2x mastery",
+                "dark blade", "fruit notifier", "perm rocket", "perm spin", "perm chop",
+                "perm spring", "perm spike", "perm smoke", "perm bomb", "perm falcon",
+                "perm fire", "perm sand", "perm diamond", "perm ice", "perm barrier",
+                "perm rubber", "perm ghost", "perm dark", "perm light", "perm magma",
+                "perm buddha", "perm spider", "perm love", "perm sound", "perm phoenix",
+                "perm portal", "perm gravity", "perm rumble", "perm blizzard", "perm pain",
+                "perm mammoth", "perm trex", "perm venom", "perm shadow", "perm dough",
+                "perm control", "perm spirit", "perm leopard", "perm kitsune", "perm dragon"
+            ]
+        };
+        let selectedSlot = null;
+        let selectedItems = {};
+        let currentCategory = 'blox-fruits';
 
-  function drawMessage() {
-    if (messageLife > 0) {
-      let message = messages[messageIndex];
-      ctx.font = `${message.size}px Arial`;
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText(message.text, canvas.width / 2, message.y);
-      messageLife -= 1;
-    } else {
-      messageIndex = (messageIndex + 1) % messages.length;
-      messageLife = 200; // Время отображения сообщения
-    }
-  }
+        function selectSlot(slotId) {
+            if (selectedSlot) {
+                document.getElementById(selectedSlot).classList.remove('selected');
+            }
+            selectedSlot = slotId;
+            document.getElementById(selectedSlot).classList.add('selected');
+        }
 
-  function animate() {
-    requestAnimationFrame(animate);
-    ctx.fillStyle = "rgba(0,0,0,0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function addItemToSlot(itemName) {
+            if (selectedSlot) {
+                selectedItems[selectedSlot] = [itemName];
+                document.getElementById(selectedSlot).textContent = itemName;
+            }
+        }
 
-    // Рисуем снег
-    snow.forEach(flake => {
-      ctx.beginPath();
-      ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
-      ctx.fillStyle = flake.color; // Используем цвет снежинки
-      ctx.fill();
+        function createItemButtons() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = ''; // Clear existing buttons
 
-      flake.y += flake.speed;
-      if (flake.y > canvas.height) {
-        flake.y = 0;
-        flake.x = Math.random() * canvas.width;
-      }
-    });
+            for (const item in prices) {
+                const button = document.createElement('button');
+                button.classList.add('item-button');
+                button.textContent = item;
+                button.setAttribute('data-item-name', item);
+                button.onclick = () => {
+                    addItemToSlot(item);
+                };
 
-    for (let i = 0; i < fires.length; i++) {
-      let fire = fires[i];
-      ctx.beginPath();
-      ctx.arc(fire.x, fire.y, fire.size, 0, Math.PI * 2);
-      ctx.fillStyle = fire.fill;
-      ctx.globalAlpha = fire.alpha;
-      ctx.fill();
+                // Add category class
+                if (categories[currentCategory].includes(item)) {
+                    button.style.display = 'block'
+                } else {
+                    button.style.display = 'none'
+                }
+                if (categories["blox-fruits"].includes(item)) {
+                    if (prices[item] >= 25 && prices[item] <= 6800 ) {
+                        button.classList.add('perm');
+                    } else if (prices[item] >= 275 && prices[item] <= 325 ) {
+                        button.classList.add('gamepass');
+                    } else {
+                        button.classList.add('fruit');
+                    }
+                }
 
-      fire.x += fire.vx;
-      fire.y += fire.vy;
-      fire.vy += fire.ay;
-      fire.alpha -= 0.008;
-      fire.life -= 1;
+                itemList.appendChild(button);
+            }
+        }
 
-      if (fire.life <= 0) {
-        fires.splice(i, 1);
-        i--;
-      }
-    }
+        function calculateTrade() {
+            let yourTotal = 0;
+            let opponentTotal = 0;
 
-    // Запускаем новые фейерверки
-    if (Math.random() < 0.03) {
-      makeFullCircleFirework({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height
-      });
-    }
+            for (let i = 1; i <= 4; i++) {
+                let yourSlotItem = selectedItems['yourSlot' + i] ? selectedItems['yourSlot' + i][0] : null;
+                let opponentSlotItem = selectedItems['opponentSlot' + i] ? selectedItems['opponentSlot' + i][0] : null;
 
-    drawMessage();
-  }
+                yourTotal += yourSlotItem ? prices[yourSlotItem] : 0;
+                opponentTotal += opponentSlotItem ? prices[opponentSlotItem] : 0;
+            }
 
-  animate();
+            const resultDiv = document.getElementById('tradeResult');
+            let resultText = '';
+            if (yourTotal < opponentTotal) {
+                resultText = '<span class="win">Win! (Ты в плюсе)</span>';
+            } else if (yourTotal > opponentTotal) {
+                resultText = '<span class="lose">Lose! (Ты в минусе)</span>';
+            } else {
+                resultText = '<span class="fair">F (Ничья)</span>';
+            }
+            resultDiv.innerHTML = resultText;
+        }
 
-  // Обработчик нажатия клавиши пробел
-  document.addEventListener('keydown', function(event) {
-    if (event.code === 'Space') {
-      messageLife = 200; // Запускаем отображение сообщения
-    }
-  });
-</script>
+        function filterItems() {
+            const searchText = document.getElementById('itemSearch').value.toLowerCase();
+            const buttons = document.querySelectorAll('.item-button');
+
+            buttons.forEach(button => {
+                const itemName = button.getAttribute('data-item-name');
+                const itemAliases = alternative_names[itemName] || [];
+                const matches = [itemName, ...itemAliases].some(name => name.toLowerCase().includes(searchText));
+
+                button.style.display = matches && categories[currentCategory].includes(itemName) ? 'block' : 'none';
+
+            });
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            // Update category button styles
+            document.querySelectorAll('.category-button').forEach(button => {
+                button.classList.remove('category-selected');
+            });
+            document.getElementById('category-' + category).classList.add('category-selected');
+            // Filter items
+            filterItems();
+        }
+
+        function clearSlots(side) {
+            for (let i = 1; i <= 4; i++) {
+                selectedItems[side + 'Slot' + i] = [];
+                document.getElementById(side + 'Slot' + i).textContent = '';
+            }
+        }
+
+        createItemButtons();
+    </script>
 </body>
 </html>
